@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package gen;
+
+option go_package = "/sender";
+
+message Error {
+    string text = 1;
+    int32 code = 2;
+}
+
+message SendMailRequest {
+    uint32 template = 1;
+    map<string,string> values = 2;
+}
+
+message SendMailResponse {
+    bool sent = 1;
+    Error err = 2;
+}
+
+service Sender {
+    rpc SendMail(SendMailRequest) returns (SendMailResponse);
+}
