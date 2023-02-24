@@ -5,13 +5,39 @@ import (
 	"net/http"
 
 	"github.com/cheeeasy2501/go-email-sender/gen/sender"
+	"github.com/cheeeasy2501/go-email-sender/internal/dto"
+	"github.com/cheeeasy2501/go-email-sender/internal/service"
+	"go.uber.org/zap"
 )
 
 type GRPCSenderServer struct {
 	sender.UnimplementedSenderServer
+	l *zap.Logger
+	s service.ISenderService
 }
 
-func (s *GRPCSenderServer) SendMail(context.Context, *sender.SendMailRequest) (*sender.SendMailResponse, error) {
+func NewGRPCSenderServer(l *zap.Logger, s service.ISenderService) *GRPCSenderServer {
+	return &GRPCSenderServer{
+		l: l,
+		s: s,
+	}
+}
+
+func (grpc *GRPCSenderServer) SendMail(context.Context, *sender.SendMailRequest) (*sender.SendMailResponse, error) {
+	// TODO: доделать передачу dto
+	// TODO: изменить Err в SendResponse на что-то другое или добавить message и code
+	d := dto.NewEmailDTO([]string{"test@mail.com"}, "Subject", "test html template")
+	sent, err := grpc.s.SendMail(d)
+	if err != nil {
+		return &sender.SendMailResponse{
+			Sent: sent,
+			Err: &sender.Error{
+				Text: "Mail isn't sent!",
+				Code: http.StatusBadRequest,
+			},
+		}, err
+	}
+
 	return &sender.SendMailResponse{
 		Sent: true,
 		Err: &sender.Error{
