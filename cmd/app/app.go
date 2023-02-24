@@ -36,7 +36,7 @@ func (a *App) Run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	log.Println("default")
+
 	err = a.RunGRPC()
 	if err != nil {
 		return err
@@ -47,8 +47,6 @@ func (a *App) Run(cfg *config.Config) error {
 
 // Initial logger for app
 func (a *App) InitLogger() error {
-	log.Println(a.cfg.GetAppEnv())
-
 	switch a.cfg.GetAppEnv() {
 	case "development":
 		l, err := zap.NewDevelopment()
