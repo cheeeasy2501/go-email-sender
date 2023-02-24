@@ -23,6 +23,15 @@ services:
       start_period: 10s
     networks:
       - services
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - services
+
 networks:
   services:
     driver: bridge

@@ -89,7 +89,7 @@ func (a *App) RunGRPC() error {
 	log.Println("Run GRPC goroutine")
 	go func() {
 		if err := grpcServer.Serve(l); err != nil {
-			a.l.Sugar().Errorln("GRPC is not started!")
+			a.l.Sugar().Errorln("GRPC is not started")
 			a.l.Sugar().Error(err)
 			a.ctx.Done()
 		}

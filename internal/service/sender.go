@@ -3,46 +3,45 @@ package service
 import (
 	"fmt"
 	"net/smtp"
+
+	"github.com/cheeeasy2501/go-email-sender/config"
+	"github.com/cheeeasy2501/go-email-sender/internal/dto"
 )
 
 type ISenderService interface {
-	SendMail() (bool, error)
+	SendMail(d dto.EmailDTO) (bool, error)
 }
 
 type SenderService struct {
+	cfg *config.Config
 }
 
-func NewSenderService() *SenderService {
-	return &SenderService{}
-}
-
-func (s *SenderService) SendMail() (bool, error) {
-	/**TODO: example send mail*/
-	from := "john.doe@example.com"
-
-	user := "9c1d45eaf7af5b"
-	password := "ad62926fa75d0f"
-
-	to := []string{
-		"roger.roe@example.com",
+func NewSenderService(cfg *config.Config) *SenderService {
+	return &SenderService{
+		cfg: cfg,
 	}
+}
 
-	addr := "smtp.mailtrap.io:2525"
-	host := "smtp.mailtrap.io"
+func (s *SenderService) SendMail(d dto.EmailDTO) (bool, error) {
+	addr := s.cfg.Mail().GetAddress()
+	host := s.cfg.Mail().GetHost()
+	from := s.cfg.Mail().GetAddressFrom()
+	user := s.cfg.Mail().GetUsername()
+	password := s.cfg.Mail().GetPassword()
 
-	msg := []byte("From: john.doe@example.com\r\n" +
-		"To: roger.roe@example.com\r\n" +
-		"Subject: Test mail\r\n\r\n" +
-		"Email body\r\n")
+	// TODO: придумать как собрать msg по RFC. Возможно builder
+	msg := []byte("From: " + from + "\r\n" +
+		"To: " + d.To()[0] + "\r\n" +
+		"Subject:" + d.Subject() + "\r\n\r\n" +
+		d.Body() + "\r\n")
 
 	auth := smtp.PlainAuth("", user, password, host)
 
-	err := smtp.SendMail(addr, auth, from, to, msg)
-
+	err := smtp.SendMail(addr, auth, from, d.To(), msg)
 	if err != nil {
 		return false, err
 	}
-
+	// TODO: заменить на нормальный logger
 	fmt.Println("Email sent successfully")
 	return true, nil
 }
