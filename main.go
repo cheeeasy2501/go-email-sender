@@ -9,6 +9,7 @@ import (
 	"github.com/cheeeasy2501/go-email-sender/cmd/app"
 	"github.com/cheeeasy2501/go-email-sender/config"
 	"github.com/cheeeasy2501/go-email-sender/internal/service"
+	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 )
 
 func main() {
@@ -34,7 +35,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
+	// тест обертки
+	li, err := logger.NewLoggerInstance("ZapProduction")
+	if err != nil {
+		panic(err)
+	}
+	lg := logger.NewLogger(li)
+	lg.Instance().Warning("Test Message :)")
 	log.Println("App is running")
 
 	<-notifyCtx.Done()
