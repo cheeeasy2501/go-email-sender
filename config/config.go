@@ -37,6 +37,10 @@ func (c *Config) GetAppLoggerType() logger.LoggerType {
 	return c.app.logger
 }
 
+func (c *Config) App() *App {
+	return c.app
+}
+
 func (c *Config) GRPC() *GRPC {
 	return c.grpc
 }
@@ -52,7 +56,7 @@ type App struct {
 
 func newApp() *App {
 	return &App{
-		env: viper.GetString("APP_ENV"),
+		env:    viper.GetString("APP_ENV"),
 		logger: logger.LoggerType(viper.GetString("APP_LOGGER")),
 	}
 }

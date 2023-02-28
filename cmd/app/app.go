@@ -31,11 +31,6 @@ func NewApp(ctx context.Context, cfg *config.Config, l logger.ILogger, s *servic
 
 // App entry point method
 func (a *App) Run(cfg *config.Config) error {
-	// err := a.InitLogger()
-	// if err != nil {
-	// 	return err
-	// }
-
 	err := a.RunGRPC()
 	if err != nil {
 		return err
@@ -43,31 +38,6 @@ func (a *App) Run(cfg *config.Config) error {
 
 	return nil
 }
-
-// Initial logger for app
-// func (a *App) InitLogger() error {
-// 	switch a.cfg.GetAppEnv() {
-// 	case "development":
-// 		l, err := zap.NewDevelopment()
-// 		if err != nil {
-// 			return err
-// 		}
-
-// 		a.l = l
-// 	case "production":
-// 		l, err := zap.NewProduction()
-// 		if err != nil {
-// 			return err
-// 		}
-
-// 		a.l = l
-// 	default:
-// 		log.Println("default")
-// 		return errors.New("Undefiend logger")
-// 	}
-
-// 	return nil
-// }
 
 // Run GRPC server
 func (a *App) RunGRPC() error {
@@ -77,7 +47,7 @@ func (a *App) RunGRPC() error {
 	}
 
 	grpcServer := grpc.NewServer()
-	grpcSenderSevice := v1.NewGRPCSenderServer(a.l, a.s.SenderService)
+	grpcSenderSevice := v1.NewGRPCSenderServer(a.cfg, a.l, a.s.SenderService)
 	sender.RegisterSenderServer(grpcServer, grpcSenderSevice)
 
 	l, err := net.Listen("tcp", a.cfg.GRPC().GetListenerAddr())

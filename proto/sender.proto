@@ -4,19 +4,17 @@ package gen;
 
 option go_package = "/sender";
 
-message Error {
-    string text = 1;
-    int32 code = 2;
-}
-
+//TODO: добавить reply 
 message SendMailRequest {
-    uint32 template = 1;
-    map<string,string> values = 2;
+    uint32 template_id = 1;
+    string subject = 2;
+    repeated string to = 3;
+    map<string,string> variables = 4;
 }
 
 message SendMailResponse {
     bool sent = 1;
-    Error err = 2;
+    string error = 2;
 }
 
 service Sender {

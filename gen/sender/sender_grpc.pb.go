@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.12
-// source: proto/sender.proto
+// source: sender.proto
 
 package sender
 
@@ -101,5 +101,5 @@ var Sender_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/sender.proto",
+	Metadata: "sender.proto",
 }
