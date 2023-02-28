@@ -1,14 +1,15 @@
 package config
 
 import (
+	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 	"github.com/spf13/viper"
 )
 
 /* All configurations */
 type Config struct {
-	appEnv string
-	grpc   *GRPC
-	mail   IMail
+	app  *App
+	grpc *GRPC
+	mail IMail
 }
 
 func NewConfig(path string, t string) (*Config, error) {
@@ -22,14 +23,18 @@ func NewConfig(path string, t string) (*Config, error) {
 	}
 
 	return &Config{
-		appEnv: viper.GetString("APP_ENV"),
-		grpc:   NewGRPC(),
-		mail:   NewMailConfig(),
+		app:  newApp(),
+		grpc: NewGRPC(),
+		mail: NewMailConfig(),
 	}, nil
 }
 
 func (c *Config) GetAppEnv() string {
-	return c.appEnv
+	return c.app.env
+}
+
+func (c *Config) GetAppLoggerType() logger.LoggerType {
+	return c.app.logger
 }
 
 func (c *Config) GRPC() *GRPC {
@@ -38,6 +43,18 @@ func (c *Config) GRPC() *GRPC {
 
 func (c *Config) Mail() IMail {
 	return c.mail
+}
+
+type App struct {
+	env    string
+	logger logger.LoggerType
+}
+
+func newApp() *App {
+	return &App{
+		env: viper.GetString("APP_ENV"),
+		logger: logger.LoggerType(viper.GetString("APP_LOGGER")),
+	}
 }
 
 /* GRPC Configuration */

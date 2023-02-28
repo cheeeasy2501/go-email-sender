@@ -18,6 +18,14 @@ func main() {
 		panic(err)
 	}
 
+	// TODO: подумать о возможности завязать разные параметры логгера в зависимости от окружения
+	log.Println(cfg.GetAppLoggerType())
+	li, err := logger.NewLoggerInstance(cfg.GetAppLoggerType())
+	if err != nil {
+		panic(err)
+	}
+	l := logger.NewLogger(li)
+
 	ctx := context.Background()
 	notifyCtx, cancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGKILL)
 	defer func() {
@@ -26,7 +34,7 @@ func main() {
 
 	s := service.NewServices(cfg)
 
-	a, err := app.NewApp(ctx, cfg, s)
+	a, err := app.NewApp(ctx, cfg, l, s)
 	if err != nil {
 		panic(err)
 	}
@@ -35,13 +43,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// тест обертки
-	li, err := logger.NewLoggerInstance(logger.ZapDevelopment)
-	if err != nil {
-		panic(err)
-	}
-	lg := logger.NewLogger(li)
-	lg.Instance().Warning("Test Message :)")
+
 	log.Println("App is running")
 
 	<-notifyCtx.Done()

@@ -2,8 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
-	"log"
 	"net"
 	"strconv"
 
@@ -11,33 +9,34 @@ import (
 	"github.com/cheeeasy2501/go-email-sender/gen/sender"
 	"github.com/cheeeasy2501/go-email-sender/internal/service"
 	v1 "github.com/cheeeasy2501/go-email-sender/internal/transport/grpc/v1"
-	"go.uber.org/zap"
+	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 	"google.golang.org/grpc"
 )
 
 type App struct {
 	ctx context.Context
 	cfg *config.Config
-	l   *zap.Logger
+	l   logger.ILogger
 	s   *service.Services
 }
 
-func NewApp(ctx context.Context, cfg *config.Config, s *service.Services) (*App, error) {
+func NewApp(ctx context.Context, cfg *config.Config, l logger.ILogger, s *service.Services) (*App, error) {
 	return &App{
 		ctx: ctx,
 		cfg: cfg,
+		l:   l,
 		s:   s,
 	}, nil
 }
 
 // App entry point method
 func (a *App) Run(cfg *config.Config) error {
-	err := a.InitLogger()
-	if err != nil {
-		return err
-	}
+	// err := a.InitLogger()
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = a.RunGRPC()
+	err := a.RunGRPC()
 	if err != nil {
 		return err
 	}
@@ -46,34 +45,34 @@ func (a *App) Run(cfg *config.Config) error {
 }
 
 // Initial logger for app
-func (a *App) InitLogger() error {
-	switch a.cfg.GetAppEnv() {
-	case "development":
-		l, err := zap.NewDevelopment()
-		if err != nil {
-			return err
-		}
+// func (a *App) InitLogger() error {
+// 	switch a.cfg.GetAppEnv() {
+// 	case "development":
+// 		l, err := zap.NewDevelopment()
+// 		if err != nil {
+// 			return err
+// 		}
 
-		a.l = l
-	case "production":
-		l, err := zap.NewProduction()
-		if err != nil {
-			return err
-		}
+// 		a.l = l
+// 	case "production":
+// 		l, err := zap.NewProduction()
+// 		if err != nil {
+// 			return err
+// 		}
 
-		a.l = l
-	default:
-		log.Println("default")
-		return errors.New("Undefiend logger")
-	}
+// 		a.l = l
+// 	default:
+// 		log.Println("default")
+// 		return errors.New("Undefiend logger")
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // Run GRPC server
 func (a *App) RunGRPC() error {
 	if a.cfg.GRPC().IsGRPCEnable() == false {
-		a.l.Sugar().Infoln("GRPC start was interrupted. GRPC_ENABLE is " + strconv.FormatBool(a.cfg.GRPC().IsGRPCEnable()))
+		a.l.Instance().Info("GRPC start was interrupted. GRPC_ENABLE is " + strconv.FormatBool(a.cfg.GRPC().IsGRPCEnable()))
 		return nil
 	}
 
@@ -86,16 +85,15 @@ func (a *App) RunGRPC() error {
 		return err
 	}
 
-	log.Println("Run GRPC goroutine")
+	a.l.Instance().Info("Run GRPC goroutine")
 	go func() {
 		if err := grpcServer.Serve(l); err != nil {
-			a.l.Sugar().Errorln("GRPC is not started")
-			a.l.Sugar().Error(err)
+			a.l.Instance().Error("GRPC is not started!", err)
 			a.ctx.Done()
 		}
 	}()
 
-	log.Println("GRPS server started")
+	a.l.Instance().Info("GRPS server started")
 
 	return nil
 }

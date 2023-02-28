@@ -7,16 +7,16 @@ import (
 	"github.com/cheeeasy2501/go-email-sender/gen/sender"
 	"github.com/cheeeasy2501/go-email-sender/internal/dto"
 	"github.com/cheeeasy2501/go-email-sender/internal/service"
-	"go.uber.org/zap"
+	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 )
 
 type GRPCSenderServer struct {
 	sender.UnimplementedSenderServer
-	l *zap.Logger
+	l logger.ILogger
 	s service.ISenderService
 }
 
-func NewGRPCSenderServer(l *zap.Logger, s service.ISenderService) *GRPCSenderServer {
+func NewGRPCSenderServer(l logger.ILogger, s service.ISenderService) *GRPCSenderServer {
 	return &GRPCSenderServer{
 		l: l,
 		s: s,
