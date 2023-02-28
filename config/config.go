@@ -36,6 +36,10 @@ func (c *Config) GRPC() *GRPC {
 	return c.grpc
 }
 
+func (c *Config) Mail() IMail {
+	return c.mail
+}
+
 /* GRPC Configuration */
 type GRPC struct {
 	enable bool   `mapstructure:"GRPC_ENABLE"`
@@ -67,23 +71,26 @@ type IMail interface {
 	GetUsername() string
 	GetPassword() string
 	GetEncryption() string
+	GetAddressFrom() string
 }
 
 type Mail struct {
-	host       string
-	port       string
-	username   string
-	password   string
-	encryption string
+	host        string
+	port        string
+	username    string
+	password    string
+	encryption  string
+	addressFrom string
 }
 
 func NewMailConfig() *Mail {
 	return &Mail{
-		host:       viper.GetString("MAIL_HOST"),
-		port:       viper.GetString("MAIL_PORT"),
-		username:   viper.GetString("MAIL_USERNAME"),
-		password:   viper.GetString("MAIL_PASSWORD"),
-		encryption: viper.GetString("MAIL_ENCRYPTION"),
+		host:        viper.GetString("MAIL_HOST"),
+		port:        viper.GetString("MAIL_PORT"),
+		username:    viper.GetString("MAIL_USERNAME"),
+		password:    viper.GetString("MAIL_PASSWORD"),
+		encryption:  viper.GetString("MAIL_ENCRYPTION"),
+		addressFrom: viper.GetString("MAIL_FROM"),
 	}
 }
 
@@ -109,4 +116,8 @@ func (c *Mail) GetPassword() string {
 
 func (c *Mail) GetEncryption() string {
 	return c.encryption
+}
+
+func (c *Mail) GetAddressFrom() string {
+	return c.addressFrom
 }

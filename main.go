@@ -24,7 +24,7 @@ func main() {
 		cancel()
 	}()
 
-	s := service.NewServices()
+	s := service.NewServices(cfg)
 
 	a, err := app.NewApp(ctx, cfg, s)
 	if err != nil {
