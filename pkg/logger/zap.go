@@ -27,7 +27,3 @@ func (l *ZapInstance) Error(args ...interface{}) {
 func (l *ZapInstance) Warning(args ...interface{}) {
 	l.i.Warnln(args)
 }
-
-func (l *ZapInstance) WithFields() {
-
-}

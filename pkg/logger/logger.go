@@ -30,7 +30,6 @@ func (s LoggerType) String() string {
 type ILoggerInstance interface {
 	Error(args ...interface{})
 	Warning(args ...interface{})
-	WithFields()
 }
 
 // интерфейс для обертки вокруг логгеров
