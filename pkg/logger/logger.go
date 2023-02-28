@@ -5,13 +5,26 @@ import (
 	"fmt"
 )
 
-type LoggerType string
+type LoggerType int
 
 // реализации логгеров
 const (
-	ZapDevelopment LoggerType = "ZapDevelopment"
-	ZapProduction  LoggerType = "ZapProduction"
+	// ZapDevelopment LoggerType = "ZapDevelopment"
+	// ZapProduction  LoggerType = "ZapProduction"
+	ZapDevelopment LoggerType = iota
+	ZapProduction
 )
+
+func (s LoggerType) String() string {
+	switch s {
+	case ZapDevelopment:
+		return "ZapDevelopment"
+	case ZapProduction:
+		return "ZapProduction"
+	}
+
+	return "unknown"
+}
 
 // имплементить интерфейс для разных пакетов
 type ILoggerInstance interface {

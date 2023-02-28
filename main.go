@@ -36,7 +36,7 @@ func main() {
 		panic(err)
 	}
 	// тест обертки
-	li, err := logger.NewLoggerInstance("ZapProduction")
+	li, err := logger.NewLoggerInstance(logger.ZapDevelopment)
 	if err != nil {
 		panic(err)
 	}
