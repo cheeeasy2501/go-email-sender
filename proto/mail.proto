@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package gen;
+
+option go_package = "/mail";
+
+message SendRequest {
+    uint32 template_id = 1;
+    string subject = 2;
+    repeated string to = 3;
+    repeated string replyTo = 4;
+    map<string,string> variables = 5;
+}
+
+message SendResponse {
+    bool sent = 1;
+    string error = 2;
+}
+
+service Mail {
+    rpc Send(SendRequest) returns (SendResponse);
+}
