@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 	"github.com/spf13/viper"
 )
@@ -9,6 +11,7 @@ import (
 type Config struct {
 	app  *App
 	grpc *GRPC
+	ampq *AMPQ
 	mail IMail
 }
 
@@ -82,6 +85,22 @@ func (c *GRPC) IsGRPCEnable() bool {
 
 func (c *GRPC) GetListenerAddr() string {
 	return c.addr + ":" + c.port
+}
+
+type AMPQ struct {
+	host, username, password, port string
+}
+
+func (c *AMPQ) GetHost() string {
+	return c.host
+}
+
+func (c *AMPQ) GetPort() string {
+	return c.port
+}
+
+func (c *AMPQ) GetConnectionString() string {
+	return fmt.Sprintf("ampq://%s:%s@%s:%s", c.username, c.password, c.host, c.port)
 }
 
 /** Mail configuration */
