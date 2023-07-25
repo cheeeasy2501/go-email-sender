@@ -11,7 +11,7 @@ import (
 type Config struct {
 	app  *App
 	grpc *GRPC
-	ampq *AMPQ
+	amqp *AMQP
 	mail IMail
 }
 
@@ -27,8 +27,9 @@ func NewConfig(path string, t string) (*Config, error) {
 
 	return &Config{
 		app:  newApp(),
-		grpc: NewGRPC(),
-		mail: NewMailConfig(),
+		grpc: newGRPC(),
+		amqp: newAMQP(),
+		mail: newMail(),
 	}, nil
 }
 
@@ -46,6 +47,10 @@ func (c *Config) App() *App {
 
 func (c *Config) GRPC() *GRPC {
 	return c.grpc
+}
+
+func (c *Config) AMQP() *AMQP {
+	return c.amqp
 }
 
 func (c *Config) Mail() IMail {
@@ -71,7 +76,7 @@ type GRPC struct {
 	port   string `mapstructure:"GRPC_PORT"`
 }
 
-func NewGRPC() *GRPC {
+func newGRPC() *GRPC {
 	return &GRPC{
 		enable: viper.GetBool("GRPC_ENABLE"),
 		addr:   viper.GetString("GRPC_HOST"),
@@ -87,20 +92,29 @@ func (c *GRPC) GetListenerAddr() string {
 	return c.addr + ":" + c.port
 }
 
-type AMPQ struct {
+type AMQP struct {
 	host, username, password, port string
 }
 
-func (c *AMPQ) GetHost() string {
+func newAMQP() *AMQP {
+	return &AMQP{
+		host:     viper.GetString("RABBITMQ_HOST"),
+		username: viper.GetString("RABBITMQ_USER"),
+		password: viper.GetString("RABBITMQ_PASSWORD"),
+		port:     viper.GetString("RABBITMQ_PORT"),
+	}
+}
+
+func (c *AMQP) GetHost() string {
 	return c.host
 }
 
-func (c *AMPQ) GetPort() string {
+func (c *AMQP) GetPort() string {
 	return c.port
 }
 
-func (c *AMPQ) GetConnectionString() string {
-	return fmt.Sprintf("ampq://%s:%s@%s:%s", c.username, c.password, c.host, c.port)
+func (c *AMQP) GetConnectionString() string {
+	return fmt.Sprintf("amqp://%s:%s@%s:%s", c.username, c.password, c.host, c.port)
 }
 
 /** Mail configuration */
@@ -123,7 +137,7 @@ type Mail struct {
 	addressFrom string
 }
 
-func NewMailConfig() *Mail {
+func newMail() *Mail {
 	return &Mail{
 		host:        viper.GetString("MAIL_HOST"),
 		port:        viper.GetString("MAIL_PORT"),
