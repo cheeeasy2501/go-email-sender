@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"context"
 	"log"
 	"net"
@@ -46,29 +45,45 @@ func (a *App) Run(cfg *config.Config) error {
 	if err != nil {
 		panic(err)
 	}
-	err = r.DeclareQueue()
-	if err != nil {
-		panic(err)
-	}
-	err = r.CreateTestConsumer()
+
+	_, err = r.DeclareQueue()
 	if err != nil {
 		panic(err)
 	}
 
 	go func() {
-		for d := range r.GetDeliveryChan() {
-			log.Printf("Received a message: %s", d.Body)
-			dotCount := bytes.Count(d.Body, []byte("."))
-			t := time.Duration(dotCount)
+
+		consChan, err := r.CreateNewChannel()
+		if err != nil {
+			panic(err)
+		}
+
+		consumer, err := r.CreateTestConsumer(consChan)
+		if err != nil {
+			panic(err)
+		}
+
+		for d := range consumer {
+			log.Printf("Received a message: %s\n", d.Body)
+			t := time.Duration(5)
 			time.Sleep(t * time.Second)
-			log.Printf("Done")
 		}
 	}()
 
 	go func() {
+		pubChan, err := r.CreateNewChannel()
+		if err != nil {
+			panic(err)
+		}
+
 		for {
-			r.AddTestPublish()
-			log.Println("------- Test message published -------")
+			err := r.AddTestPublish(pubChan)
+			if err != nil {
+				log.Printf("------- Error publishing ------- %w", err)
+			} else {
+				log.Println("------- Test message published -------")
+			}
+
 			time.Sleep(1 * time.Second)
 		}
 	}()

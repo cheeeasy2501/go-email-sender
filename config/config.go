@@ -15,10 +15,12 @@ type Config struct {
 	mail IMail
 }
 
-func NewConfig(path string, t string) (*Config, error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigName("app")
-	viper.SetConfigType(t)
+func NewConfig(name string) (*Config, error) {
+	if name == "" {
+		name = ".env"
+	}
+
+	viper.SetConfigFile(name)
 
 	err := viper.ReadInConfig()
 	if err != nil {

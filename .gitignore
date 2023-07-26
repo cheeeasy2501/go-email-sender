@@ -1,4 +1,4 @@
 .idea
 .vscode
-.shared-files
-.shared-files/*
+./shared-files
+./shared-files/*

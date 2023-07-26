@@ -26,6 +26,7 @@ services:
   rabbit:
     image: rabbitmq:management
     restart: always
+    # env_file: .env
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -35,6 +36,8 @@ services:
       - 5672:5672
     volumes:
       - ./shared-files/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - services
   mailhog:
     image: mailhog/mailhog:latest
     restart: always

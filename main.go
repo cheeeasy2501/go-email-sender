@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.NewConfig(".", "env")
+	cfg, err := config.NewConfig(".env")
 	if err != nil {
 		panic(err)
 	}
