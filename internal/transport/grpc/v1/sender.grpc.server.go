@@ -18,7 +18,7 @@ type GRPCSenderServer struct {
 	s service.ISenderService
 }
 
-//TODO: подумать стоит ли прокидывать cfg сюда
+// TODO: подумать стоит ли прокидывать cfg сюда
 func NewGRPCSenderServer(с *config.Config, l logger.ILogger, s service.ISenderService) *GRPCSenderServer {
 	return &GRPCSenderServer{
 		c: с,
@@ -30,9 +30,12 @@ func NewGRPCSenderServer(с *config.Config, l logger.ILogger, s service.ISenderS
 func (grpc *GRPCSenderServer) SendMail(ctx context.Context, r *sender.SendMailRequest) (*sender.SendMailResponse, error) {
 	// TODO: изменить Err в SendResponse на что-то другое или добавить message и code
 	// TODO: реализовать получение template по template_id из grpc и вставку variable в шаблон + валидацию этих значений!
-	d := dto.NewEmailDTO(grpc.c.Mail().GetAddressFrom(), r.To, r.Subject, "test html template")
+	// d := dto.NewEmailDTO(grpc.c.Mail().GetAddressFrom(), r.To, r.Subject, "test html template")
+	vm := map[string]interface{}{"message": "test html template"}
 
-	sent, err := grpc.s.SendMail(d)
+	d := dto.NewEmailDTO(r.To, r.Subject, vm)
+
+	sent, err := grpc.s.Send(&d)
 	if err != nil {
 		grpc.l.Instance().Error("Mail isn't sent!", err)
 		return &sender.SendMailResponse{

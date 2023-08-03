@@ -1,4 +1,4 @@
-package ampq
+package example
 
 import (
 	"bytes"

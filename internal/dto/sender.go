@@ -1,24 +1,33 @@
 package dto
 
-type EmailDTO struct {
-	from    string
-	to      []string
-	subject string
-	body    string
+type IEmailDTO interface {
+	To() []string
+	Subject() string
+	Variables() map[string]interface{}
 }
 
-func NewEmailDTO(from string, to []string, subject, body string) EmailDTO {
+type EmailDTO struct {
+	// from      string
+	to        []string
+	subject   string
+	variables map[string]interface{}
+}
+
+func NewEmailDTO(
+	// from string, TODO: зачем нам знать откуда пришёл имеил, если само приложение должно знать об этом?
+	to []string, subject string, variables map[string]interface{}) EmailDTO {
+
 	return EmailDTO{
-		from:    from,
-		to:      to,
-		subject: subject,
-		body:    body,
+		// from:    from,
+		to:        to,
+		subject:   subject,
+		variables: variables,
 	}
 }
 
-func (d *EmailDTO) From() string {
-	return d.from
-}
+// func (d *EmailDTO) From() string {
+// 	return d.from
+// }
 
 func (d *EmailDTO) To() []string {
 	return d.to
@@ -28,6 +37,6 @@ func (d *EmailDTO) Subject() string {
 	return d.subject
 }
 
-func (d *EmailDTO) Body() string {
-	return d.body
+func (d *EmailDTO) Variables() map[string]interface{} {
+	return d.variables
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type ISenderService interface {
-	SendMail(d dto.EmailDTO) (bool, error)
+	Send(d dto.IEmailDTO) (bool, error)
 }
 
 type SenderService struct {
@@ -23,7 +23,7 @@ func NewSenderService(cfg *config.Config) *SenderService {
 	}
 }
 
-func (s *SenderService) SendMail(d dto.EmailDTO) (bool, error) {
+func (s *SenderService) Send(d dto.IEmailDTO) (bool, error) {
 	addr := s.cfg.Mail().GetAddress()
 	host := s.cfg.Mail().GetHost()
 	user := s.cfg.Mail().GetUsername()
@@ -36,7 +36,7 @@ func (s *SenderService) SendMail(d dto.EmailDTO) (bool, error) {
 
 	auth := smtp.PlainAuth("", user, password, host)
 
-	err = smtp.SendMail(addr, auth, d.From(), d.To(), msg)
+	err = smtp.SendMail(addr, auth, s.cfg.Mail().GetAddressFrom(), d.To(), msg)
 	if err != nil {
 		return false, err
 	}

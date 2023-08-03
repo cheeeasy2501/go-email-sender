@@ -2,15 +2,14 @@ package app
 
 import (
 	"context"
-	"log"
+
 	"net"
 	"strconv"
-	"time"
+
 
 	"github.com/cheeeasy2501/go-email-sender/config"
 	"github.com/cheeeasy2501/go-email-sender/gen/sender"
 	"github.com/cheeeasy2501/go-email-sender/internal/service"
-	amqp "github.com/cheeeasy2501/go-email-sender/internal/transport/amqp"
 	v1 "github.com/cheeeasy2501/go-email-sender/internal/transport/grpc/v1"
 	"github.com/cheeeasy2501/go-email-sender/pkg/logger"
 	"google.golang.org/grpc"
@@ -38,55 +37,6 @@ func (a *App) Run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	// TODO: тест amqp
-	r := amqp.NewReceiver(cfg)
-
-	err = r.Connect()
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = r.DeclareQueue()
-	if err != nil {
-		panic(err)
-	}
-
-	go func() {
-
-		consChan, err := r.CreateNewChannel()
-		if err != nil {
-			panic(err)
-		}
-
-		consumer, err := r.CreateTestConsumer(consChan)
-		if err != nil {
-			panic(err)
-		}
-
-		for d := range consumer {
-			log.Printf("Received a message: %s\n", d.Body)
-			t := time.Duration(5)
-			time.Sleep(t * time.Second)
-		}
-	}()
-
-	go func() {
-		pubChan, err := r.CreateNewChannel()
-		if err != nil {
-			panic(err)
-		}
-
-		for {
-			err := r.AddTestPublish(pubChan)
-			if err != nil {
-				log.Printf("------- Error publishing ------- %w", err)
-			} else {
-				log.Println("------- Test message published -------")
-			}
-
-			time.Sleep(1 * time.Second)
-		}
-	}()
 
 	return nil
 }
@@ -119,3 +69,4 @@ func (a *App) RunGRPC() error {
 
 	return nil
 }
+

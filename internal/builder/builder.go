@@ -10,10 +10,10 @@ func NewMailBuilder() *MailBuilder {
 	return &MailBuilder{}
 }
 
-func (b *MailBuilder) Build(d dto.EmailDTO) ([]byte, error) {
+func (b *MailBuilder) Build(d dto.IEmailDTO) ([]byte, error) {
 	return []byte(
-		"From: " + d.From() + "\r\n" +
+		"From: " + "test@example.com" + "\r\n" +
 			"To: " + d.To()[0] + "\r\n" +
 			"Subject: " + d.Subject() + "\r\n\r\n" +
-			d.Body() + "\r\n"), nil
+			"TEST BODY HERE!" + "\r\n"), nil
 }
