@@ -3,10 +3,10 @@ package errs
 import "fmt"
 
 type Error struct {
-	StructName       string
-	FuncName         string
-	Message          string
-	DeveloperMessage error
+	StructName       string `json:"struct,omitempty"`
+	FuncName         string `json:"function,"`
+	Message          string `json:"message"`
+	DeveloperMessage error  `json:"developer_message,omitempty"`
 }
 
 func (e Error) Error() string {

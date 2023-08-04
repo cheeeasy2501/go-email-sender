@@ -1,9 +1,12 @@
 package amqp
 
 import (
-	"github.com/cheeeasy2501/go-email-sender/config"
+	_ "fmt"
+
+	_ "github.com/cheeeasy2501/go-email-sender/config"
 	"github.com/cheeeasy2501/go-email-sender/internal/dto"
-	amqp "github.com/rabbitmq/amqp091-go"
+	_ "github.com/cheeeasy2501/go-email-sender/pkg/errs"
+	_ "github.com/rabbitmq/amqp091-go"
 )
 
 /**
@@ -21,26 +24,6 @@ type MailQueueMessage struct {
 	to        []string
 	subject   string
 	variables map[string]interface{}
-}
-
-type Consumer struct {
-	cfg *config.AMQP
-	ch  <-chan amqp.Delivery
-}
-
-// попытка подключения к очереди
-func (c *Consumer) Connect() error {
-	return nil
-}
-
-// открытие канала доставки
-func (c *Consumer) OpenChannel() error {
-	return nil
-}
-
-// Получение канала доставки
-func (c *Consumer) QueueDelivery() (<-chan amqp.Delivery, error) {
-	return nil, nil
 }
 
 type Publisher struct {
