@@ -4,7 +4,7 @@ import "fmt"
 
 type Error struct {
 	StructName       string `json:"struct,omitempty"`
-	FuncName         string `json:"function,"`
+	FuncName         string `json:"function"`
 	Message          string `json:"message"`
 	DeveloperMessage error  `json:"developer_message,omitempty"`
 }
