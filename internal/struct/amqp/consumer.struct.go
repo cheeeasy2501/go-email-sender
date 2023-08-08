@@ -99,6 +99,10 @@ func (c *Consumer) DoDeliveryChannel(ch *amqp.Channel, o ConsumerOptions) error 
 
 // быстрое создание consumer
 func FastCreateNewConsumer(cfg *config.AMQP, o ConsumerOptions) (Consumer, error) {
+	sn := "amqp"
+	fn := "FastCreateNewConsumer"
+	m := "Consumer not created"
+
 	c := Consumer{
 		cfg: cfg,
 	}
@@ -106,9 +110,9 @@ func FastCreateNewConsumer(cfg *config.AMQP, o ConsumerOptions) (Consumer, error
 	err := c.Connect()
 	if err != nil {
 		return Consumer{}, errs.NewError(
-			"",
-			"FastCreateNewConsumer",
-			"Consumer not created!",
+			sn,
+			fn,
+			m,
 			fmt.Errorf("Consumer can't open connect by amqp - %w", err),
 		)
 	}
@@ -116,9 +120,9 @@ func FastCreateNewConsumer(cfg *config.AMQP, o ConsumerOptions) (Consumer, error
 	ch, err := c.OpenChannel()
 	if err != nil {
 		return Consumer{}, errs.NewError(
-			"",
-			"FastCreateNewConsumer",
-			"Consumer not created!",
+			sn,
+			fn,
+			m,
 			fmt.Errorf("Consumer can't open channel - %w", err),
 		)
 	}
@@ -139,9 +143,9 @@ func FastCreateNewConsumer(cfg *config.AMQP, o ConsumerOptions) (Consumer, error
 	err = c.DoDeliveryChannel(ch, o)
 	if err != nil {
 		return Consumer{}, errs.NewError(
-			"",
-			"FastCreateNewConsumer",
-			"Consumer not created!",
+			sn,
+			fn,
+			m,
 			fmt.Errorf("Consumer don't make delivery channel - %w", err),
 		)
 	}

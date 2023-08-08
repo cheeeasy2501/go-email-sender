@@ -20,25 +20,47 @@ import (
 Общая идея: транспортный слой принимает данные из сообщения и преобразует его в dto для взаимодействия с service-слоем
 */
 
+type IMailQueueMessage interface {
+	To() []string
+	Subject() string
+	Variables() map[string]interface{}
+}
+
 type MailQueueMessage struct {
 	to        []string
 	subject   string
 	variables map[string]interface{}
 }
 
+func (m *MailQueueMessage) To() []string {
+	return m.to
+}
+
+func (m *MailQueueMessage) Subject() string {
+	return m.subject
+}
+
+func (m *MailQueueMessage) Variables() map[string]interface{} {
+	return m.variables
+}
+
 type Publisher struct {
 }
 
-func Test() {
+func Run() {
 
 	/** Вычитываем из очереди*/
 
 	/** Создаём dto */
+	vm := map[string]interface{}{"message": "test html template", "test": "abscscs", "test1": "qdddddd"}
+	m := dto.NewEmailDTO([]string{"not-real@example.com"}, "Very important subject", vm)
+	_ = m
 	/** Мапинг variables */
-	vm := map[string]interface{}{"message": "test html template"}
-
-	_ = dto.NewEmailDTO([]string{"not-real@example.com"}, "Very important subject", vm)
 
 	/** Вызываем сервис mail */
+
+}
+
+func MapVariables(m IMailQueueMessage) {
 
 }

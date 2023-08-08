@@ -10,7 +10,13 @@ type Error struct {
 }
 
 func (e Error) Error() string {
-	str := fmt.Sprintf("%s - %s : %s", e.StructName, e.FuncName, e.Message)
+	var str string
+
+	if e.StructName != "" {
+		str = fmt.Sprintf("%s -", e.StructName)
+	}
+
+	str = fmt.Sprintf("%s %s : %s", str, e.FuncName, e.Message)
 
 	if e.DeveloperMessage != nil {
 		str = fmt.Sprintf("%s | DEV - %s", str, e.DeveloperMessage)
